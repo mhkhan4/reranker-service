@@ -1,0 +1,9 @@
+services:
+  reranker-service:
+    build: .
+    ports:
+      - "8001:8001"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    env_file:
+      - .env
