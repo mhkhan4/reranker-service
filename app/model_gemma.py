@@ -20,6 +20,7 @@ def load_model() -> None:
     _model = FlagLLMReranker(
         settings.gemma_model_name,
         use_fp16=settings.use_fp16,
+        devices=settings.devices,
     )
     _infer_semaphore = asyncio.Semaphore(settings.max_concurrent_inferences)
     logger.info("Gemma reranker loaded.")

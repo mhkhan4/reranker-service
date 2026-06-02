@@ -22,7 +22,7 @@ def load_model() -> None:
     _model = FlagReranker(
         settings.model_name,
         use_fp16=settings.use_fp16,
-        devices="cpu",
+        devices=settings.devices,
     )
     _infer_semaphore = asyncio.Semaphore(settings.max_concurrent_inferences)
     logger.info("Model loaded.")

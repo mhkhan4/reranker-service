@@ -11,9 +11,10 @@ class Settings(BaseSettings):
     model_name: str = "BAAI/bge-reranker-v2-m3"
     gemma_model_name: str = "BAAI/bge-reranker-v2-gemma"
     use_fp16: bool = True
+    devices: str = "cpu"
     # Reranking is sequential over (query, doc) pairs — one in-flight call is enough.
     max_concurrent_inferences: int = 1
-    # 0 => let torch decide
+    # 0 => let torch decide; ignored when running on GPU
     torch_num_threads: int = 0
     max_docs_per_request: int = 128
 
