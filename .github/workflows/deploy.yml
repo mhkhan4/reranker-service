@@ -1,0 +1,22 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Oracle
+        env:
+          ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
+        run: |
+          echo "${{ secrets.ORACLE_SSH_KEY }}" > /tmp/oracle_key.pem
+          chmod 600 /tmp/oracle_key.pem
+          ssh -i /tmp/oracle_key.pem -o StrictHostKeyChecking=no ubuntu@$ORACLE_HOST \
+            "cd ~/reranker-service && git pull origin main && docker compose up -d --build"
+          rm /tmp/oracle_key.pem
