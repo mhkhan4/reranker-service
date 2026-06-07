@@ -3,7 +3,6 @@ import logging
 from fastapi import APIRouter, HTTPException, status
 
 from app import model as reranker
-from app import model_gemma as gemma_reranker
 from app.config import settings
 from app.schemas import (
     HealthResponse,
@@ -42,30 +41,6 @@ async def rerank(req: RerankRequest) -> RerankResponse:
         results=[RerankResult(index=idx, relevance_score=score) for idx, score in ranked],
     )
 
-
-@router.post("/rerank/gemma", response_model=RerankResponse)
-async def rerank_gemma(req: RerankRequest) -> RerankResponse:
-    if len(req.documents) > settings.max_docs_per_request:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Too many documents: max {settings.max_docs_per_request}, got {len(req.documents)}",
-        )
-    if not gemma_reranker.is_loaded():
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Gemma model is still loading — retry after /ready returns 200",
-        )
-
-    logger.debug("Gemma reranking %d doc(s), top_n=%s", len(req.documents), req.top_n)
-    try:
-        ranked = await gemma_reranker.rerank(req.query, req.documents, req.top_n)
-    except RuntimeError as exc:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc))
-
-    return RerankResponse(
-        model=settings.gemma_model_name,
-        results=[RerankResult(index=idx, relevance_score=score) for idx, score in ranked],
-    )
 
 
 @router.get("/health", response_model=HealthResponse)

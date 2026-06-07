@@ -2,7 +2,7 @@ name: Build & Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [oracle-deploy]
 
 jobs:
   deploy:
@@ -18,5 +18,5 @@ jobs:
           echo "${{ secrets.ORACLE_SSH_KEY }}" > /tmp/oracle_key.pem
           chmod 600 /tmp/oracle_key.pem
           ssh -i /tmp/oracle_key.pem -o StrictHostKeyChecking=no ubuntu@$ORACLE_HOST \
-            "cd ~/reranker-service && git pull origin main && docker compose up -d --build"
+            "cd ~/reranker-service && git fetch origin && git checkout oracle-deploy && git pull origin oracle-deploy && docker compose up -d --build"
           rm /tmp/oracle_key.pem

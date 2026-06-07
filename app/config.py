@@ -9,7 +9,6 @@ class Settings(BaseSettings):
     service_port: int = 8001
 
     model_name: str = "BAAI/bge-reranker-v2-m3"
-    gemma_model_name: str = "BAAI/bge-reranker-v2-gemma"
     use_fp16: bool = True
     devices: str = "cpu"
     # Reranking is sequential over (query, doc) pairs — one in-flight call is enough.
