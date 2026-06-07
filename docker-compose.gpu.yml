@@ -2,6 +2,7 @@ services:
   reranker-service:
     environment:
       - DEVICES=cuda:0
+      - API_KEY=${API_KEY}
     deploy:
       resources:
         reservations:
