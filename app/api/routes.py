@@ -1,6 +1,5 @@
 import logging
 import secrets
-from typing import Optional
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 
@@ -20,8 +19,8 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-def _verify_api_key(x_api_key: Optional[str] = Header(None, alias="X-API-Key")) -> None:
-    if settings.api_key and not secrets.compare_digest(x_api_key or "", settings.api_key):
+def _verify_api_key(x_api_key: str = Header(..., alias="X-API-Key")) -> None:
+    if settings.api_key and not secrets.compare_digest(x_api_key, settings.api_key):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid API key")
 
 
