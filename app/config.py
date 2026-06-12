@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     service_port: int = 8001
 
+    api_key: str = ""
+
     model_name: str = "BAAI/bge-reranker-v2-m3"
     gemma_model_name: str = "BAAI/bge-reranker-v2-gemma"
     use_fp16: bool = True

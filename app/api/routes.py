@@ -1,6 +1,7 @@
 import logging
+import secrets
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 
 from app import model as reranker
 from app import model_gemma as gemma_reranker
@@ -18,7 +19,12 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@router.post("/rerank", response_model=RerankResponse)
+def _verify_api_key(x_api_key: str = Header(..., alias="X-API-Key")) -> None:
+    if settings.api_key and not secrets.compare_digest(x_api_key, settings.api_key):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid API key")
+
+
+@router.post("/rerank", response_model=RerankResponse, dependencies=[Depends(_verify_api_key)])
 async def rerank(req: RerankRequest) -> RerankResponse:
     if len(req.documents) > settings.max_docs_per_request:
         raise HTTPException(
@@ -43,7 +49,7 @@ async def rerank(req: RerankRequest) -> RerankResponse:
     )
 
 
-@router.post("/rerank/gemma", response_model=RerankResponse)
+@router.post("/rerank/gemma", response_model=RerankResponse, dependencies=[Depends(_verify_api_key)])
 async def rerank_gemma(req: RerankRequest) -> RerankResponse:
     if len(req.documents) > settings.max_docs_per_request:
         raise HTTPException(
