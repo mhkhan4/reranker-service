@@ -3,9 +3,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.gpu
+    ports:
+      - "8001:8001"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
     environment:
       - DEVICES=cuda:0
       - API_KEY=${API_KEY}
+      - MAX_CONCURRENT_INFERENCES=4
     deploy:
       resources:
         reservations:
