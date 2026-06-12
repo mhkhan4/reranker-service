@@ -18,7 +18,7 @@ def load_model() -> None:
     global _model, _infer_semaphore
     if settings.torch_num_threads > 0:
         torch.set_num_threads(settings.torch_num_threads)
-    logger.info("Loading %s (fp16=%s) on CPU…", settings.model_name, settings.use_fp16)
+    logger.info("Loading %s (fp16=%s) on %s…", settings.model_name, settings.use_fp16, settings.devices)
     _model = FlagReranker(
         settings.model_name,
         use_fp16=settings.use_fp16,
