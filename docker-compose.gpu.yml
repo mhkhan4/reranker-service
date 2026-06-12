@@ -1,7 +1,11 @@
 services:
   reranker-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.gpu
     environment:
       - DEVICES=cuda:0
+      - API_KEY=${API_KEY}
     deploy:
       resources:
         reservations:
